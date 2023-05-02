@@ -5,3 +5,7 @@
 - [x] [1380C](https://codeforces.com/problemset/problem/1380/C)
 - [x] [1475C](https://codeforces.com/problemset/problem/1475/C)
 - [x] [1369C](https://codeforces.com/problemset/problem/1369/C)
+
+## Extra:
+- [x] [489C](https://codeforces.com/problemset/problem/489/C)
+- [x] [1256D](https://codeforces.com/problemset/problem/1256/D)
