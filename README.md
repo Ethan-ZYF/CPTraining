@@ -13,3 +13,4 @@
 - Easy version of DP can be solved, hard version requires slope trick or segment tree to optimize
 ## [Day4 1500(DP practice)](./Day4-0504-1500/README.md)
 ## [Day5 1500](./Day5-0505-1500/README.md)
+## [Day6 1500](./Day6-0506-1500/README.md)
