@@ -11,11 +11,22 @@ using i64 = long long;
 void solve() {
     int n;
     cin >> n;
-    vector<int> a(n), b;
+    vector<i64> a(n), pref(n);
     for (auto& x : a) cin >> x;
-    for (int i = 0; i < n / 2; i++)
-        b.push_back(abs(a[i] - a[n - i - 1]));
-    cout << reduce(b.begin(), b.end(), 0, gcd<int, int>) << '\n';
+    i64 cur = 0;
+    int ans = 0;
+    set<i64> s = {0};
+    for (auto& x : a) {
+        cur += x;
+        if (s.count(cur)) {
+            ans++;
+            s.clear();
+            s.insert(0);
+            cur = x;
+        }
+        s.insert(cur);
+    }
+    cout << ans << '\n';
 }
 
 int main() {
@@ -23,7 +34,7 @@ int main() {
     cin.tie(nullptr);
 
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int Task = 1; Task <= T; Task++) {
         debug(Task);
         solve();

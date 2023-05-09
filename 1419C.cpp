@@ -9,13 +9,21 @@ using i64 = long long;
 #endif
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> a(n), b;
+    int n, x;
+    cin >> n >> x;
+    vector<int> a(n);
     for (auto& x : a) cin >> x;
-    for (int i = 0; i < n / 2; i++)
-        b.push_back(abs(a[i] - a[n - i - 1]));
-    cout << reduce(b.begin(), b.end(), 0, gcd<int, int>) << '\n';
+    int cntx = ranges::count(a, x);
+    if (cntx == n) {
+        cout << 0 << '\n';
+        return;
+    }
+    i64 acc = accumulate(a.begin(), a.end(), 0LL);
+    if (acc == 1LL * n * x || cntx) {
+        cout << 1 << '\n';
+        return;
+    }
+    cout << 2 << '\n';
 }
 
 int main() {

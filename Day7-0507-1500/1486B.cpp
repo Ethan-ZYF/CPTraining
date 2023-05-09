@@ -8,14 +8,19 @@ using i64 = long long;
 #define debug(...)
 #endif
 
+i64 calc(const vector<int>& a) {
+    int n = a.size();
+    return a[n / 2] - a[(n - 1) / 2] + 1;
+}
+
 void solve() {
     int n;
     cin >> n;
-    vector<int> a(n), b;
-    for (auto& x : a) cin >> x;
-    for (int i = 0; i < n / 2; i++)
-        b.push_back(abs(a[i] - a[n - i - 1]));
-    cout << reduce(b.begin(), b.end(), 0, gcd<int, int>) << '\n';
+    vector<int> x(n), y(n);
+    for (int i = 0; i < n; i++) cin >> x[i] >> y[i];
+    sort(x.begin(), x.end());
+    sort(y.begin(), y.end());
+    cout << calc(x) * calc(y) << '\n';
 }
 
 int main() {

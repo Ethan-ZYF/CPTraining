@@ -1,10 +1,10 @@
 # CPTraining
-## Solved: 30
+## Solved: 40
 |Difficulty|Num solved|
 |:-:|:-:|
 | $[0, 1400)$ | 3|
 | $[1400, 1500)$ | 11|
-| $[1500, 1600)$ | 16|
+| $[1500, 1600)$ | 26|
 ## Daily Training on codeforces
 ## [Day1 1400](./Day1-0501-1400/README.md)
 ## [Day2 1400](./Day2-0502-1400/README.md)
@@ -14,3 +14,5 @@
 ## [Day4 1500(DP practice)](./Day4-0504-1500/README.md)
 ## [Day5 1500](./Day5-0505-1500/README.md)
 ## [Day6 1500](./Day6-0506-1500/README.md)
+## [Day7 1500](./Day7-0507-1500/README.md)
+## [Day8 1500](./Day8-0508-1500/README.md)
