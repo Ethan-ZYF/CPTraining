@@ -1,13 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
-
-#ifdef LOCAL
-#include "algo/debug.h"
-#else
-#define debug(...)
-#endif
-
+/*
+ * @author jiangly
+ * https://codeforces.com/profile/jiangly
+ */
 template <class T>
 constexpr T power(T a, i64 b) {
     T res = 1;
@@ -224,22 +221,61 @@ constexpr MInt<P> CInv = MInt<P>(V).inv();
 
 constexpr int P = 1e9 + 7;
 using Z = MInt<P>;
-void solve() {
-    Z n;
-    cin >> n;
-    
-}
+
+struct Comb {
+    int n;
+    std::vector<Z> _fac;
+    std::vector<Z> _invfac;
+    std::vector<Z> _inv;
+
+    Comb() : n{0}, _fac{1}, _invfac{1}, _inv{0} {}
+    Comb(int n) : Comb() {
+        init(n);
+    }
+
+    void init(int m) {
+        if (m <= n) return;
+        _fac.resize(m + 1);
+        _invfac.resize(m + 1);
+        _inv.resize(m + 1);
+
+        for (int i = n + 1; i <= m; i++) {
+            _fac[i] = _fac[i - 1] * i;
+        }
+        _invfac[m] = _fac[m].inv();
+        for (int i = m; i > n; i--) {
+            _invfac[i - 1] = _invfac[i] * i;
+            _inv[i] = _invfac[i] * _fac[i - 1];
+        }
+        n = m;
+    }
+
+    Z fac(int m) {
+        if (m > n) init(2 * m);
+        return _fac[m];
+    }
+    Z invfac(int m) {
+        if (m > n) init(2 * m);
+        return _invfac[m];
+    }
+    Z inv(int m) {
+        if (m > n) init(2 * m);
+        return _inv[m];
+    }
+    Z binom(int n, int m) {
+        if (n < m || m < 0) return 0;
+        return fac(n) * invfac(m) * invfac(n - m);
+    }
+} comb;
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T = 1;
-    // cin >> T;
-    for (int Task = 1; Task <= T; Task++) {
-        debug(Task);
-        solve();
-    }
+    Z n;
+    cin >> n;
+    Z res = comb.fac(n.val()) - power(Z(2), n.val() - 1);
+    cout << res << '\n';
 
     return 0;
 }
