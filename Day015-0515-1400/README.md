@@ -11,3 +11,4 @@
 - https://atcoder.jp/contests/abc141/tasks/abc141_d
 - https://atcoder.jp/contests/abc076/tasks/abc076_c
 - https://atcoder.jp/contests/abc127/tasks/abc127_d
+- https://atcoder.jp/contests/abc288/tasks/abc288_d
