@@ -11,23 +11,24 @@ using i64 = long long;
 void solve() {
     i64 a, b, q;
     cin >> a >> b >> q;
-    if (a > b) {
-        swap(a, b);
-    }
     i64 c = lcm(a, b);
+    vector<i64> cnt(c + 1);
+    for (int i = 1; i <= c; i++) {
+        cnt[i] = cnt[i - 1];
+        if (i % a % b != i % b % a) {
+            cnt[i]++;
+        }
+    }
+    debug(cnt);
     auto f = [&](i64 x) -> i64 {
-        i64 k = x / c;
-        i64 remainder = x % c + 1;
-        i64 res = k * b + min(remainder, b);
-        debug(x, k, remainder, res);
-        return x - res;
+        i64 res = x / c * cnt[c] + cnt[x % c];
+        return res;
     };
     while (q--) {
         i64 l, r;
         cin >> l >> r;
-        debug(l, r);
-        auto ans = f(r) - f(l - 1);
-        cout << ans << ' ';
+        l--;
+        cout << f(r) - f(l) << ' ';
     }
     cout << '\n';
 }

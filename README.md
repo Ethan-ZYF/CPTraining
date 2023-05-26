@@ -22,3 +22,6 @@
 ## [Day020 1400](./Day020-0520-1400/README.md)
 ## [Day021 1600](./Day021-0521-1600/README.md)
 ## [Day022 1600](./Day022-0522-1600/README.md)
+## [Day023 Graph](./Day023-0523-graph/README.md)
+## [Day024 Graph](./Day024-0524-graph/README.md)
+## [Day025 Graph](./Day025-0525-graph/README.md)
