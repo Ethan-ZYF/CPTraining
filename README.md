@@ -25,3 +25,7 @@
 ## [Day023 Graph](./Day023-0523-graph/README.md)
 ## [Day024 Graph](./Day024-0524-graph/README.md)
 ## [Day025 Graph](./Day025-0525-graph/README.md)
+## [Day026 Graph](./Day026-0526-graph/README.md)
+## [Day027 Graph](./Day027-0525-graph/README.md)
+## [Day028 DP](./Day028-0525-dp/README.md)
+## [Day029 DP](./Day029-0525-dp/README.md)
