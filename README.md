@@ -30,3 +30,7 @@
 ## [Day028 DP](./Day028-0528-dp/README.md)
 ## [Day029 DP](./Day029-0529-dp/README.md)
 ## [Day030 DP](./Day030-0530-dp/README.md)
+## [Day031 DP](./Day031-0531-dp/README.md)
+## [Day032 DP](./Day032-0601-practice/README.md)
+## [Day033 CFpractice](./Day033-0602-practice/README.md)
+## [Day034 CFpractice](./Day034-0605-practice/README.md)
