@@ -36,3 +36,6 @@
 ## [Day034 CFpractice](./Day034-0603-practice/README.md)
 ## [Day035 1700](./Day035-0605-1700/README.md)
 ## [Day036 1700](./Day036-0608-1700/README.md)
+## [Day037 practice](./Day037-0611/README.md)
+## [Day038 VP](./Day038-0612/README.md)
+## [Day038 practice and upsolve](./Day039-0613/README.md)
