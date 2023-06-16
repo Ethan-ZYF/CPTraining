@@ -38,4 +38,7 @@
 ## [Day036 1700](./Day036-0608-1700/README.md)
 ## [Day037 practice](./Day037-0611/README.md)
 ## [Day038 VP](./Day038-0612/README.md)
-## [Day038 practice and upsolve](./Day039-0613/README.md)
+## [Day039 practice and upsolve](./Day039-0613/README.md)
+## [Day040 practice and upsolve](./Day040-0614/README.md)
+## [Day041 practice and upsolve](./Day041-0615/README.md)
+## [Day042 practice](./Day042-0616/README.md)
