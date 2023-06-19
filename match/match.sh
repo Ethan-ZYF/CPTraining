@@ -24,7 +24,7 @@ do
     else
         printf '|%3s|: ' "$i"
         echo "WA"
-        exit 1
+        break
     fi
 done
 rm me.out ac.out
