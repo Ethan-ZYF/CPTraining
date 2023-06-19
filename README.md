@@ -42,3 +42,6 @@
 ## [Day040 practice and upsolve](./Day040-0614/README.md)
 ## [Day041 practice and upsolve](./Day041-0615/README.md)
 ## [Day042 practice](./Day042-0616/README.md)
+## [Day043 practice](./Day043-0617/README.md)
+## [Day044 practice](./Day044-0618/README.md)
+## [Day045 practice](./Day045-0619/README.md)
