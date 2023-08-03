@@ -10,14 +10,6 @@ do
     python3 make_input.py > input.txt
     ./me.out < input.txt > me.txt
     ./ac.out < input.txt > ac.txt
-    # if [ "$(diff me.txt ac.txt)" != "" ] 
-    #     printf '|%3s|: ' "$i"
-    #     echo "WA"
-    #     exit 1
-    # else
-    #     printf '|%3s|: ' "$i" 
-    #     echo "AC"
-    # fi
     if diff me.txt ac.txt >/dev/null ; then
         printf '|%3s|: ' "$i" 
         echo "AC"
