@@ -9,11 +9,6 @@ using i64 = long long;
 #endif
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    for (auto& x : a) cin >> x;
-    vector<array<int, 3>> dp(n);
     
 }
 

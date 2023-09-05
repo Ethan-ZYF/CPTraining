@@ -9,21 +9,24 @@ using i64 = long long;
 #endif
 
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    int a = m, b = n - m;
-    if(b <= 0 or a >= b){
-        cout << -1 << endl;
-        return;
+    string s;
+    cin >> s;
+    i64 ans = 0, mask = 0;
+    map<i64, int> cnt;
+    cnt[0] = 1;
+    for (auto c : s) {
+        mask ^= 1 << c;
+        ans += cnt[mask];
+        cnt[mask]++;
     }
-    cout << a << " " << b << endl;
+    cout << ans << '\n';
 }
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
 
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int Task = 1; Task <= T; Task++) {
         debug(Task);
         solve();

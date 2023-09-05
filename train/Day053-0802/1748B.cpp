@@ -9,23 +9,28 @@ using i64 = long long;
 #endif
 
 void solve() {
+    int n;
+    cin >> n;
     string s;
     cin >> s;
-    for_each(s.begin(), s.end(), [](char& c) { c = tolower(c); });
-    vector<string> vs = {"shitou", "jiandao", "bu"};
-    int i = find(vs.begin(), vs.end(), s) - vs.begin();
-    i++;
-    if (i == 3) {
-        i = 0;
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+        map<char, int> cnt;
+        for (int j = 0; j < 100 and i + j < n; j++) {
+            cnt[s[i + j]]++;
+            int mxv = ranges::max(cnt | ranges::views::values);
+            int sz = cnt.size();
+            if (mxv <= sz) ans++;
+        }
     }
-    cout << vs[i] << endl;
+    cout << ans << endl;
 }
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
 
     int T = 1;
-    // cin >> T;
+    cin >> T;
     for (int Task = 1; Task <= T; Task++) {
         debug(Task);
         solve();

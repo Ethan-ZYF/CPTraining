@@ -53,3 +53,5 @@
 ## [Day051 practice](./Day051-0726/README.md)
 ## [Day052 practice](./Day052-0731/README.md)
 ## [Day053 practice](./Day053-0802/README.md)
+## [Day054 practice](./Day054-0803/README.md)
+## [Day055 practice](./Day055-0804/README.md)

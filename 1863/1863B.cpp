@@ -11,12 +11,18 @@ using i64 = long long;
 void solve() {
     int n;
     cin >> n;
-    if (n == 1) {
-        cout << 0 << endl;
-        return;
+    vector<int> p(n);
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        x--;
+        p[x] = i;
     }
-    int ans = log2(n - 1) + 1;
-    cout << ans << endl;
+    int ans = 0;
+    for (int i = 1; i < n; i++) {
+        ans += p[i] < p[i - 1];
+    }
+    cout << ans << "\n";
 }
 
 int main() {
