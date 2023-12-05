@@ -1,11 +1,8 @@
 import random
 
-T = 20
-MXA = 6
-print(T)
-for t in range(T):
-    N = random.randint(1, 6)
-    print(N)
-    for i in range(N):
-        print(random.randint(1, MXA), end=" ")
-    print()
+N = 10
+W = 1000
+print(N, W)
+for i in range(N):
+    a, b, c = random.randint(1, 100), random.randint(1, 100), random.randint(1, 100)
+    print(a, b, c)

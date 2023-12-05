@@ -8,37 +8,33 @@ using i64 = long long;
 #define debug(...)
 #endif
 
-constexpr i64 INF = 1e10 + 1;
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    for (auto& x : a) cin >> x;
-
-    set<i64> f, s;
-    i64 ans = 1;
-    for (auto& i : a) {
-        set<i64> g;
-        for (auto& j : f) {
-            i64 m = lcm(i, j);
-            if (m < INF) {
-                s.insert(m);
-                g.insert(m);
-            }
-        }
-        g.insert(i);
-        s.insert(i);
-        f = g;
+    int n, vol;
+    cin >> n >> vol;
+    vector<int> w(n), p(n), l(n);
+    for (int i = 0; i < n; i++) {
+        cin >> p[i] >> w[i] >> l[i];
     }
-    while (s.contains(ans)) ans++;
-    cout << ans << '\n';
+
+    vector<int> dp(vol + 1);
+    for (int i = 0; i < n; i++) {
+        int res = l[i];
+        for (int k = 1; k <= res; res -= k, k *= 2)
+            for (int j = vol; j >= w[i] * k; j--)
+                dp[j] = max(dp[j], dp[j - w[i] * k] + p[i] * k);
+
+        for (int j = vol; j >= w[i] * res; j--)
+            dp[j] = max(dp[j], dp[j - w[i] * res] + p[i] * res);
+    }
+
+    cout << dp[vol] << endl;
 }
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
 
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int Task = 1; Task <= T; Task++) {
         debug(Task);
         solve();

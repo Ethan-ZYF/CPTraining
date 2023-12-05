@@ -9,17 +9,16 @@ using i64 = long long;
 #endif
 
 void solve() {
-    string s;
-    cin >> s;
-    i64 ans = 0, mask = 0;
-    map<i64, int> cnt;
-    cnt[0] = 1;
-    for (auto c : s) {
-        mask ^= 1 << c;
-        ans += cnt[mask];
-        cnt[mask]++;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (auto& x : a) cin >> x;
+    i64 ans = 0;
+    for (int i = 0; i < n; i++) {
+        int l = i + 1, r = n - i;
+        ans += 1LL * a[i] * l * r;
     }
-    cout << ans << '\n';
+    cout << ans << "\n";
 }
 
 int main() {

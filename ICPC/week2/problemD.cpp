@@ -9,10 +9,20 @@ using i64 = long long;
 #endif
 
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.size();
-    
+    int n;
+    cin >> n;
+    vector<int> a(n), depth(n);
+    for (auto& x : a) cin >> x;
+    int d = 0;
+    depth[d] = 0;
+    for (int i = 1; i < n; i++){
+        if(i > 1 and a[i - 1] > a[i] ){
+            d++;
+        }
+        depth[i] = depth[d] + 1;
+        debug(i, d, depth[i]);
+    }
+    cout << depth.back() << '\n';
 }
 
 int main() {
