@@ -1,37 +1,74 @@
 #include <bits/stdc++.h>
 using namespace std;
-// using i64 = int; // AC
-using i64 = long long;  //! WA
-constexpr int N = 105;
-i64 n, W, nums[N][3];
+using i64 = long long;
+
+#ifdef LOCAL
+#include "algo/debug.h"
+#else
+#define debug(...)
+#endif
+
+struct Bipartite {
+    std::vector<std::vector<int>> g;
+    std::vector<int> color;
+
+    Bipartite(int n) : g(n), color(n, -1) {}
+
+    void add(int u, int v) {
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    bool dfs(int u, int c) {
+        color[u] = c;
+        for (auto v : g[u]) {
+            if (color[v] == -1) {
+                if (!dfs(v, c ^ 1))
+                    return false;
+            } else if (color[v] == color[u]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool work() {
+        for (int i = 0; i < g.size(); i++) {
+            if (color[i] == -1) {
+                if (!dfs(i, 0))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    std::vector<int> get_color() {
+        return color;
+    }
+};
 
 void solve() {
-    cin >> n >> W;
-    for (int i = 1; i <= n; i++) {
-        cin >> nums[i][0] >> nums[i][1] >> nums[i][2];
+    int n;
+    cin >> n;
+    Bipartite b(n);
+    for (int i = 0; i < n; i++) {
+        int x, y;
+        cin >> x >> y;
+        x--, y--;
+        b.add(x, y);
     }
-    vector<vector<i64>> dp(n + 1, vector(W + 1, 0LL));
-    // vector<vector<i64>> dp(n + 1, vector(W + 1, 0));
-    for (i64 i = 1; i <= n; i++) {
-        i64 v = nums[i][0], w = nums[i][1], cnt = nums[i][2];
-        map<i64, deque<pair<i64, i64>>> mp;
-        for (i64 j = 0; j <= W; j++) {
-            // i64 mod = j % w, t = j / w;
-            i64 mod = fmod(j, w), t = j / w;
-            i64 temp = dp[i - 1][j] - t * v;
-            while (!mp[mod].empty() && temp >= mp[mod].back().second)
-                mp[mod].pop_back();
-            mp[mod].emplace_back(t, temp);
-            while (t - mp[mod].front().first > cnt)
-                mp[mod].pop_front();
-            if (j)
-                dp[i][j] = max(dp[i][j - 1], mp[mod].front().second + t * v);
-        }
-    }
-    cout << dp[n][W] << endl;
+    cout << (b.work() ? "YES" : "NO") << '\n';
 }
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
-    solve();
+
+    int T = 1;
+    cin >> T;
+    for (int Task = 1; Task <= T; Task++) {
+        debug(Task);
+        solve();
+    }
+
+    return 0;
 }

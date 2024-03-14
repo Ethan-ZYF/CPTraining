@@ -1,65 +1,83 @@
 #include <bits/stdc++.h>
 using namespace std;
-using i64 = long long;
-
 #ifdef LOCAL
 #include "algo/debug.h"
 #else
 #define debug(...)
 #endif
 
-i64 dp(i64 start, i64 finish) {
-    string low = bitset<32>(start).to_string();
-    string high = bitset<32>(finish).to_string();
-    int len = high.size();
-    low = string(len - low.size(), '0') + low;
-    vector memo(len, vector(2, -1LL));
+using i64 = long long;
+constexpr int OFFSET[6] = {7, 9, 21, 33, 87, 93};
+constexpr int BASE = 131;
+std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+i64 P = 1e9 + OFFSET[rng() % 6];
 
-    auto f = [&](auto&& self, int i, bool lm_lo, bool lm_hi, bool is_num, bool last_one) -> i64 {
-        if (i == len)
-            return 1;
-        if (!lm_lo && !lm_hi && memo[i][last_one] != -1)
-            return memo[i][last_one];
+struct StringRollingHash {
+    std::vector<i64> hash, base, mod;
 
-        i64 res = 0;
-
-        if (!is_num && low[i] == '0')
-            res += self(self, i + 1, lm_lo, lm_hi, false, false);
-
-        int lo = lm_lo ? low[i] - '0' : 0;
-        int hi = lm_hi ? high[i] - '0' : 1;
-        int d0 = is_num ? 0 : 1;
-        for (int nx = max(d0, lo); nx <= hi; nx++) {
-            if (last_one && nx == 1)
-                continue;
-            res += self(self, i + 1, lm_lo && nx == lo, lm_hi && nx == hi, true, nx == 1);
+    StringRollingHash(const std::string& s) {
+        int n = s.size();
+        hash.resize(n + 1);
+        base.resize(n + 1);
+        mod.resize(n + 1);
+        base[0] = 1;
+        mod[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            base[i] = (base[i - 1] * BASE) % P;
+            mod[i] = (mod[i - 1] * P) % P;
         }
-
-        if (!lm_lo && !lm_hi) {
-            memo[i][last_one] = res;
+        for (int i = 0; i < n; i++) {
+            hash[i + 1] = (hash[i] * BASE + s[i]) % P;
         }
-        return res;
-    };
-    return f(f, 0, true, true, false, false);
-}
+    }
+
+    i64 get(int l, int r) {
+        return (hash[r] - (hash[l] * base[r - l]) % P + P) % P;
+    }
+
+    i64 get(const std::string& s) {
+        i64 h = 0;
+        for (char c : s) {
+            h = (h * BASE + c) % P;
+        }
+        return h;
+    }
+};
 
 class Solution {
    public:
-    int findIntegers(int n) {
-        return dp(0, n);
+    long long countPrefixSuffixPairs(vector<string>& words) {
+        int n = words.size();
+        map<i64, int> cnt;
+        i64 ans = 0;
+        reverse(words.begin(), words.end());
+        for (auto& s : words) {
+            StringRollingHash srh(s);
+            debug(P);
+            int len = s.size();
+            i64 h = srh.get(s);
+            debug(s, h);
+            ans += cnt[h];
+
+            for (int i = 0; i < len; i++) {
+                i64 h1 = srh.get(0, i + 1);
+                int j = len - i - 1;
+                i64 h2 = srh.get(j, len);
+                if (h1 == h2) {
+                    debug(s, s.substr(0, i + 1), s.substr(j, i + 1));
+                    cnt[h1]++;
+                }
+            }
+            debug(cnt);
+        }
+        return ans;
     }
 };
 
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
-
-    int T = 1;
-    cin >> T;
-    for (int Task = 1; Task <= T; Task++) {
-        debug(Task);
-        Solution sol;
-        int n;
-        cin >> n;
-        cout << sol.findIntegers(n) << '\n';
-    }
+    Solution sol;
+    // words = ["a","aba","ababa","aa"]
+    vector<string> words = {"a", "aba", "ababa", "aa"};
+    cout << sol.countPrefixSuffixPairs(words) << endl;
+    return 0;
 }
