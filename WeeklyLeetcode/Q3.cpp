@@ -41,9 +41,7 @@ i64 dp(i64 start, i64 finish) {
 
 class Solution {
    public:
-    long long minEnd(int n, int x) {
-        
-    }
+    long long minEnd(int n, int x) {}
 };
 
 int main() {
