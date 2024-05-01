@@ -1,31 +1,39 @@
 import subprocess
-from random import randint
+from random import *
 
-MY_CODE_PATH = "./Zme.cpp"
-AC_CODE_PATH = "./Zac.cpp"
-MY_OUTPUT_PATH = "./me.out"
-AC_OUTPUT_PATH = "./ac.out"
+CC = "g++-13"
+CUR_PATH = "/".join(__file__.split("/")[:-1])
+MY_CODE_PATH = f"{CUR_PATH}/Zme.cpp"
+AC_CODE_PATH = f"{CUR_PATH}/Zac.cpp"
+MY_BINARY_PATH = f"{CUR_PATH}/me"
+AC_BINARY_PATH = f"{CUR_PATH}/ac"
+MY_OUTPUT_PATH = f"{CUR_PATH}/outputs/me.out"
+AC_OUTPUT_PATH = f"{CUR_PATH}/outputs/ac.out"
+INPUT_PATH = f"{CUR_PATH}/input.txt"
+
 NUM_TESTS = 100
 
 
 def make_input(outfile):
-    T = 1
+    """
+    TODO: Modify this function to randomly generate input for the problem
+    """
+    T = 10
+    MX = 100
     outfile.write(f"{T}\n")
     for t in range(T):
-        N = randint(1, 100)
-        outfile.write(f"{N}\n")
-        for _ in range(N):
-            outfile.write(f"{randint(1, N)} {randint(1, N)}\n")
+        n, a, b, L, R = randint(1, 100), randint(1, 100), randint(1, 100), randint(1, 100), randint(1, 100)
+        outfile.write(f"{n} {a} {b} {L} {R}\n")
 
 
 def compile_code():
-    subprocess.run(["g++-13", MY_CODE_PATH, "-o", "me"])
-    subprocess.run(["g++-13", AC_CODE_PATH, "-o", "ac"])
+    subprocess.run([CC, MY_CODE_PATH, "-o", MY_BINARY_PATH])
+    subprocess.run([CC, AC_CODE_PATH, "-o", AC_BINARY_PATH])
 
 
 def run_code():
-    subprocess.run(["./me"], stdin=open("input.txt", "r"), stdout=open(MY_OUTPUT_PATH, "w"))
-    subprocess.run(["./ac"], stdin=open("input.txt", "r"), stdout=open(AC_OUTPUT_PATH, "w"))
+    subprocess.run([MY_BINARY_PATH], stdin=open(INPUT_PATH, "r"), stdout=open(MY_OUTPUT_PATH, "w"))
+    subprocess.run([AC_BINARY_PATH], stdin=open(INPUT_PATH, "r"), stdout=open(AC_OUTPUT_PATH, "w"))
 
 
 def compare_output() -> bool:
@@ -40,23 +48,21 @@ def compare_output() -> bool:
 
 
 def cleanup():
-    subprocess.run(["rm", "me"])
-    subprocess.run(["rm", "ac"])
-    subprocess.run(["rm", MY_OUTPUT_PATH])
-    subprocess.run(["rm", AC_OUTPUT_PATH])
+    subprocess.run(["rm", MY_BINARY_PATH])
+    subprocess.run(["rm", AC_BINARY_PATH])
 
 
 if __name__ == "__main__":
-
+    print("Compiling code...")
     compile_code()
-
+    print("Running tests...")
     for i in range(NUM_TESTS):
-        with open("input.txt", "w") as infile:
+        with open(INPUT_PATH, "w") as infile:
             make_input(infile)
-        print(f"Running test {i + 1}", end=": ")
+        print(f"Running test {(i + 1):2}", end=": ")
         run_code()
         if not compare_output():
             print("Test case:")
-            print(open("input.txt", "r").read())
+            print(open(INPUT_PATH, "r").read())
             break
     cleanup()

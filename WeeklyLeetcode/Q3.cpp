@@ -8,57 +8,50 @@ using i64 = long long;
 #define debug(...)
 #endif
 
+i64 dp(i64 start, i64 finish) {
+    string low = to_string(start);
+    string high = to_string(finish);
+    int len = high.size();
+    low = string(len - low.size(), '0') + low;  // 补前导零，和 high 对齐
+    vector memo(len, -1LL);
+    auto f = [&](auto&& self, int i, bool limit_low, bool limit_high, bool is_num) -> i64 {
+        if (i == len)
+            return is_num;
+        if (!limit_low && !limit_high && memo[i] != -1)
+            return memo[i];
+
+        i64 res = 0;
+        if (!is_num && low[i] == '0')
+            res += self(self, i + 1, false, true, false);
+
+        int lo = limit_low ? low[i] - '0' : 0;
+        int hi = limit_high ? high[i] - '0' : 9;
+        int d0 = is_num ? 0 : 1;
+        for (int nx = max(d0, lo); nx <= hi; nx++) {
+            res += self(self, i + 1, limit_low && nx == lo, limit_high && nx == hi, true);
+        }
+
+        if (!limit_low && !limit_high) {
+            memo[i] = res;
+        }
+        return res;
+    };
+    return f(f, 0, true, true, false);
+}
+
 class Solution {
    public:
-    vector<int> countPairsOfConnectableServers(vector<vector<int>>& edges, int k) {
-        int n = edges.size() + 1;
-        vector<vector<pair<int, int>>> g(n);
-
-        for (auto& e : edges) {
-            int u = e[0], v = e[1], w = e[2];
-            g[u].emplace_back(v, w);
-            g[v].emplace_back(u, w);
-        }
-        vector<int> q;
-        auto dfs = [&](auto&& self, int u, int fa, int rt, i64 val) -> int {
-            int tmp = val % k == 0;
-            for (auto [v, w] : g[u]) {
-                if (v == fa)
-                    continue;
-                if (u == rt) {
-                    q.push_back(self(self, v, u, rt, w));
-                }
-                tmp += self(self, v, u, rt, val + w);
-            }
-            return tmp;
-        };
-        vector<int> ans(n);
-        for (int i = 0; i < n; i++) {
-            int tot = 0, cur = 0;
-            q.clear();
-            dfs(dfs, i, -1, i, 0);
-            for (int x : q) {
-                tot += x * cur;
-                cur += x;
-            }
-            ans[i] = tot;
-        }
-        return ans;
+    long long minEnd(int n, int x) {
+        
     }
 };
 
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
-    // edges = [[0,1,1],[1,2,5],[2,3,13],[3,4,9],[4,5,2]], signalSpeed = 1
-    vector<vector<int>> edges = {{0, 1, 1}, {1, 2, 5}, {2, 3, 13}, {3, 4, 9}, {4, 5, 2}};
-    int k = 1;
+
     Solution sol;
-    auto ans = sol.countPairsOfConnectableServers(edges, k);
-    debug(ans);
-    // edges = [[0,6,3],[6,5,3],[0,3,1],[3,2,7],[3,1,6],[3,4,2]], signalSpeed = 3
-    edges = {{0, 6, 3}, {6, 5, 3}, {0, 3, 1}, {3, 2, 7}, {3, 1, 6}, {3, 4, 2}};
-    k = 3;
-    ans = sol.countPairsOfConnectableServers(edges, k);
-    debug(ans);
+    vector<int> coins = {1, 2, 3, 5, 7, 11, 13, 17, 19, 20, 21, 22, 23, 24, 25};
+    int k = 5;
+    cout << sol.findKthSmallest(coins, k) << endl;
+
     return 0;
 }
