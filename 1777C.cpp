@@ -21,6 +21,7 @@ void solve() {
 
     sort(a.begin(), a.end());
     a.erase(unique(a.begin(), a.end()), a.end());
+    n = a.size();
     int l = 0, ans = INF;
     map<int, int> cnt;
     for (int r = 0; r < n; r++) {
@@ -34,9 +35,7 @@ void solve() {
             for (auto x : factors[a[l]]) {
                 if (x > m)
                     break;
-                if (cnt.contains(x))
-                    cnt[x]--;
-                if (cnt[x] == 0)
+                if (--cnt[x] == 0)
                     cnt.erase(x);
             }
             l++;
