@@ -18,12 +18,12 @@ def make_input(outfile):
     """
     TODO: Modify this function to randomly generate input for the problem
     """
-    T = 10
+    T = 1
     MX = 100
     outfile.write(f"{T}\n")
     for t in range(T):
-        n, a, b, L, R = randint(1, 100), randint(1, 100), randint(1, 100), randint(1, 100), randint(1, 100)
-        outfile.write(f"{n} {a} {b} {L} {R}\n")
+        n, k = randint(1, MX), randint(1, MX)
+        outfile.write(f"{n} {k}\n")
 
 
 def compile_code():
