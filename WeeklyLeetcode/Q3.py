@@ -9,24 +9,25 @@ from math import gcd, lcm
 
 
 class Solution:
-    def minEnd(self, n: int, x: int) -> int:
-        n -= 1
-        # n 的第j位是 x 的第i位
-        i = j = 0
-        while n >> j:
-            if x >> i & 1 == 0:
-                bit = n >> j & 1
-                x |= bit << i
-                j += 1
-            i += 1
-        return x
+    def sumDigitDifferences(self, nums: List[int]) -> int:
+        ans = 0
+        n = len(nums)
+        cnt = [[0] * 10 for _ in range(10)]
+        for x in nums:
+            i = 0
+            while x:
+                cnt[i][x % 10] += 1
+                x //= 10
+                i += 1
+        for i in range(10):
+            s = sum(cnt[i])
+            for x in cnt[i]:
+                ans += x * (s - x)
+                s -= x
+        return ans
 
 
 if __name__ == "__main__":
     s = Solution()
-    # n = 3, x = 4
-    print(s.minEnd(3, 4))
-    print(s.minEnd(3, 2))
-    # 3 2: 6
-    print(s.minEnd(2, 4))
-    # 5
+    nums = [13, 23, 12]
+    print(s.sumDigitDifferences(nums))

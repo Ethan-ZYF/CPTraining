@@ -6,11 +6,15 @@ from heapq import *
 from bisect import *
 from typing import *
 
+
 class Solution:
-    def addedInteger(self, nums1: List[int], nums2: List[int]) -> int:
-        nums1.sort()
-        nums2.sort()
-        return nums2[0] - nums1[0]
+    def isArraySpecial(self, nums: List[int]) -> bool:
+        ans = True
+        for x, y in paiwise(nums):
+            if x % 2 == y % 2:
+                ans = False
+                break
+        return ans
 
 if __name__ == "__main__":
     s = Solution()

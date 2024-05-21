@@ -9,28 +9,32 @@ from string import ascii_lowercase
 
 
 class Solution:
-    def minimumAddedInteger(self, nums1: List[int], nums2: List[int]) -> int:
-        nums1.sort()
-        nums2.sort()
-        # print(nums1, nums2)
-        def check(x):
-            cnt = 0
-            i = j = 0
-            while i < len(nums1) and j < len(nums2):
-                if nums1[i] + x == nums2[j]:
-                    i += 1
-                    j += 1
-                else:
-                    cnt += 1
-                    i += 1
-            return cnt <= 2
-        for i in range(-1000, 1001):
-            if check(i):
-                return i
-        return -1
+    def isArraySpecial(self, nums: List[int], queries: List[List[int]]) -> List[bool]:
+        ans = []
+        n = len(nums)
+        segs = [0] * n
+        for i in range(n):
+            nums[i] -= i
+            nums[i] %= 2
+        l = 0
+        for r in range(n):
+            if nums[r] == nums[l]:
+                segs[r] = l
+            else:
+                l = r
+                segs[r] = l
+        # print(nums)
+        # print(segs)
+        for l, r in queries:
+            ll = segs[r]
+            ans.append(ll <= l)
+        return ans
+
 
 if __name__ == "__main__":
     s = Solution()
-    # [9, 4, 3, 9, 4]
-    # [7, 8, 8]
-    print(s.minimumAddedInteger(nums1=[9, 4, 3, 9, 4], nums2=[7, 8, 8]))
+    # [3, 4, 1, 2, 6]
+    # nums = [4, 3, 1, 1, 1, 1, 6]
+    nums = [4, 3, 1, 6]
+    queries = [[0, 2], [2, 3]]
+    print(s.isArraySpecial(nums, queries))
