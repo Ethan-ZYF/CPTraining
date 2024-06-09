@@ -2,53 +2,79 @@
 using namespace std;
 using i64 = long long;
 
-constexpr int N = 65535;
-constexpr int MOD = 1e9 + 7;
-using Ret = array<i64, N>;
-constexpr Ret f{[]() -> Ret {
-    Ret fac{};
-    fac[0] = 1;
-    for (int i = 1; i < N; i++) {
-        fac[i] = fac[i - 1] * i % MOD;
-    }
-    return fac;
-}()};
-constexpr Ret inv{[]() -> Ret {
-    Ret inv{};
-    inv[1] = 1;
-    for (int i = 2; i < N; i++) {
-        inv[i] = (MOD - MOD / i) * inv[MOD % i] % MOD;
-    }
-    return inv;
-}()};
+#ifdef LOCAL
+#include "algo/debug.h"
+#else
+#define debug(...)
+#endif
 
-i64 C(int n, int m) {
-    if (n < m) {
-        return 0;
+template <class Info, class Merge = std::plus<Info>>
+struct SegmentTree {
+    const int n;
+    const Merge merge;
+    std::vector<Info> info;
+
+    SegmentTree(int n) : n(n), merge(Merge()), info(4 << std::__lg(n)) {}
+
+    SegmentTree(std::vector<Info> init) : SegmentTree(init.size()) {
+        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+            if (r - l == 1) {
+                info[p] = init[l];
+                return;
+            }
+            int m = (l + r) / 2;
+            build(2 * p, l, m);
+            build(2 * p + 1, m, r);
+            pull(p);
+        };
+        build(1, 0, n);
     }
-    return f[n] * inv[m] % MOD * inv[n - m] % MOD;
-}
+
+    void pull(int p) {
+        info[p] = merge(info[2 * p], info[2 * p + 1]);
+    }
+
+    void modify(int p, int l, int r, int x, const Info& v) {
+        if (r - l == 1) {
+            info[p] = v;
+            return;
+        }
+        int m = (l + r) / 2;
+        if (x < m) {
+            modify(2 * p, l, m, x, v);
+        } else {
+            modify(2 * p + 1, m, r, x, v);
+        }
+        pull(p);
+    }
+
+    void modify(int p, const Info& v) {
+        modify(1, 0, n, p, v);
+    }
+
+    Info rangeQuery(int p, int l, int r, int x, int y) {
+        if (l >= y || r <= x) {
+            return Info();
+        }
+        if (l >= x && r <= y) {
+            return info[p];
+        }
+        int m = (l + r) / 2;
+        return merge(rangeQuery(2 * p, l, m, x, y), rangeQuery(2 * p + 1, m, r, x, y));
+    }
+
+    Info rangeQuery(int l, int r) {
+        return rangeQuery(1, 0, n, l, r);
+    }
+};
 
 class Solution {
    public:
-    int waysToReachStair(int k) {
-        int ans = 0;
-        int cur = 1;
-        for (int i = 0; i < 30; i++) {
-            int diff = cur - k;
-            if (diff <= i + 1 && diff >= 0) {
-                ans += C[i + 1][diff];
-            }
-            cur += 1 << i;
-        }
-        return ans;
-    }
+    vector<bool> getResults(vector<vector<int>>& queries) {}
 };
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
-    static_assert(C[5][2] == 10);
-    static_assert(C[5][5] == 1);
-    static_assert(C[5][0] == 2);
+
     return 0;
 }

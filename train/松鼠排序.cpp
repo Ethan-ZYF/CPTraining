@@ -2,6 +2,7 @@
 using namespace std;
 using i64 = long long;
 namespace rgs = std::ranges;
+
 #ifdef LOCAL
 #include "algo/debug.h"
 #else
@@ -51,22 +52,13 @@ struct DSU {
 };
 
 void solve() {
-    int n;
+    int n, ans = 0;
     cin >> n;
     DSU dsu(n);
     for (int i = 0; i < n; i++) {
         int x;
         cin >> x;
-        dsu.merge(i, x - 1);
-    }
-    debug(dsu.siz);
-    map<int, int> sz;
-    for (int i = 0; i < n; i++) {
-        sz[dsu.find(i)]++;
-    }
-    int ans = 0;
-    for (auto [k, v] : sz) {
-        ans += v - 1;
+        ans += dsu.merge(i, x - 1);
     }
     cout << ans << '\n';
 }

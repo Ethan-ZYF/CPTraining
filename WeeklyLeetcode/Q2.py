@@ -9,26 +9,21 @@ from string import ascii_lowercase
 
 
 class Solution:
-    def isArraySpecial(self, nums: List[int], queries: List[List[int]]) -> List[bool]:
-        ans = []
-        n = len(nums)
-        segs = [0] * n
-        for i in range(n):
-            nums[i] -= i
-            nums[i] %= 2
-        l = 0
-        for r in range(n):
-            if nums[r] == nums[l]:
-                segs[r] = l
+    def countDays(self, days: int, meetings: List[List[int]]) -> int:
+        meetings.sort()
+        merged = []
+        s, e = meetings[0]
+        for x, y in meetings[1:]:
+            if x <= e:
+                e = max(e, y)
             else:
-                l = r
-                segs[r] = l
-        # print(nums)
-        # print(segs)
-        for l, r in queries:
-            ll = segs[r]
-            ans.append(ll <= l)
-        return ans
+                merged.append([s, e])
+                s, e = x, y
+        merged.append([s, e])
+        for s, e in merged:
+            days -= e - s + 1
+        return days
+
 
 
 if __name__ == "__main__":

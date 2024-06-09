@@ -8,13 +8,15 @@ from typing import *
 
 
 class Solution:
-    def isArraySpecial(self, nums: List[int]) -> bool:
-        ans = True
-        for x, y in paiwise(nums):
-            if x % 2 == y % 2:
-                ans = False
-                break
-        return ans
+    def minimumChairs(self, s: str) -> int:
+        mx = cur = 0
+        for c in s:
+            if c == 'E':
+                cur += 1
+            else:
+                cur -= 1
+            mx = max(mx, cur)
+        return mx
 
 if __name__ == "__main__":
     s = Solution()

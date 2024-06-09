@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
+namespace rgs = std::ranges;
 
 #ifdef LOCAL
 #include "algo/debug.h"
@@ -8,144 +9,214 @@ using i64 = long long;
 #define debug(...)
 #endif
 
+/*
+ * @author jiangly
+ * https://codeforces.com/profile/jiangly
+ */
 template <class Info, class Tag>
-struct Seg {
-    int left, right;
-    Info info;
-    Tag tag;
-    Seg *left_child = nullptr, *right_child = nullptr;
+struct LazySegmentTree {
+    int n;
+    std::vector<Info> info;
+    std::vector<Tag> tag;
 
-    Seg(int lb, int rb) {
-        left = lb;
-        right = rb;
+    LazySegmentTree() : n(0) {}
+
+    LazySegmentTree(int n_, Info v_ = Info()) {
+        init(n_, v_);
     }
 
-    void apply(const Tag& v) {
-        info.sz = right - left;
-        info.apply(v);
-        tag.apply(v);
+    template <class T>
+    LazySegmentTree(std::vector<T> init_) {
+        init(init_);
     }
 
-    void push() {
-        if (left_child) {
-            left_child->apply(tag);
-            right_child->apply(tag);
-        }
-        tag = Tag();
+    void init(int n_, Info v_ = Info()) {
+        init(std::vector(n_, v_));
     }
 
-    void pull() {
-        info = left_child->info + right_child->info;
+    template <class T>
+    void init(std::vector<T> init_) {
+        n = init_.size();
+        info.assign(4 << std::__lg(n), Info());
+        tag.assign(4 << std::__lg(n), Tag());
+        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+            if (r - l == 1) {
+                info[p] = init_[l];
+                return;
+            }
+            int m = (l + r) / 2;
+            build(2 * p, l, m);
+            build(2 * p + 1, m, r);
+            pull(p);
+        };
+        build(1, 0, n);
     }
 
-    void extend() {
-        if (!left_child && left + 1 < right) {
-            int t = (left + right) / 2;
-            left_child = new Seg(left, t);
-            right_child = new Seg(t, right);
-        }
+    void pull(int p) {
+        info[p] = info[2 * p] + info[2 * p + 1];
     }
 
-    void modify(int k, const Info& v) {
-        if (left + 1 == right) {
-            info = v;
+    void apply(int p, const Tag& v) {
+        info[p].apply(v);
+        tag[p].apply(v);
+    }
+
+    void push(int p) {
+        apply(2 * p, tag[p]);
+        apply(2 * p + 1, tag[p]);
+        tag[p] = Tag();
+    }
+
+    void modify(int p, int l, int r, int x, const Info& v) {
+        if (r - l == 1) {
+            info[p] = v;
             return;
         }
-        extend();
-        push();
-        if (k < left_child->right) {
-            left_child->modify(k, v);
+        int m = (l + r) / 2;
+        push(p);
+        if (x < m) {
+            modify(2 * p, l, m, x, v);
         } else {
-            right_child->modify(k, v);
+            modify(2 * p + 1, m, r, x, v);
         }
-        pull();
+        pull(p);
+    }
+
+    void modify(int p, const Info& v) {
+        modify(1, 0, n, p, v);
+    }
+
+    Info rangeQuery(int p, int l, int r, int x, int y) {
+        if (l >= y || r <= x) {
+            return Info();
+        }
+        if (l >= x && r <= y) {
+            return info[p];
+        }
+        int m = (l + r) / 2;
+        push(p);
+        return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m, r, x, y);
     }
 
     Info rangeQuery(int l, int r) {
-        if (l >= right || r <= left) {
-            return Info();
+        return rangeQuery(1, 0, n, l, r);
+    }
+
+    void rangeApply(int p, int l, int r, int x, int y, const Tag& v) {
+        if (l >= y || r <= x) {
+            return;
         }
-        if (l <= left && r >= right) {
-            return info;
+        if (l >= x && r <= y) {
+            apply(p, v);
+            return;
         }
-        extend();
-        push();
-        return left_child->rangeQuery(l, r) + right_child->rangeQuery(l, r);
+        int m = (l + r) / 2;
+        push(p);
+        rangeApply(2 * p, l, m, x, y, v);
+        rangeApply(2 * p + 1, m, r, x, y, v);
+        pull(p);
     }
 
     void rangeApply(int l, int r, const Tag& v) {
-        if (l >= right || r <= left) {
-            return;
-        }
-        if (l <= left && r >= right) {
-            apply(v);
-            return;
-        }
-        extend();
-        push();
-        left_child->rangeApply(l, r, v);
-        right_child->rangeApply(l, r, v);
-        pull();
+        return rangeApply(1, 0, n, l, r, v);
     }
 
-    Info query(int k) {
-        return rangeQuery(k, k + 1);
+    template <class F>
+    int findFirst(int p, int l, int r, int x, int y, F pred) {
+        if (l >= y || r <= x || !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        int res = findFirst(2 * p, l, m, x, y, pred);
+        if (res == -1) {
+            res = findFirst(2 * p + 1, m, r, x, y, pred);
+        }
+        return res;
     }
 
-    Info allQuery() {
-        return rangeQuery(left, right);
+    template <class F>
+    int findFirst(int l, int r, F pred) {
+        return findFirst(1, 0, n, l, r, pred);
+    }
+
+    template <class F>
+    int findLast(int p, int l, int r, int x, int y, F pred) {
+        if (l >= y || r <= x || !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        int res = findLast(2 * p + 1, m, r, x, y, pred);
+        if (res == -1) {
+            res = findLast(2 * p, l, m, x, y, pred);
+        }
+        return res;
+    }
+
+    template <class F>
+    int findLast(int l, int r, F pred) {
+        return findLast(1, 0, n, l, r, pred);
     }
 };
 
 struct Tag {
-    i64 sum;
+    i64 add;
 
-    Tag(i64 v = 0) : sum(v) {}
+    Tag(i64 add_ = 0) : add(add_) {}
 
-    void apply(const Tag& v) {
-        sum += v.sum;
+    void apply(Tag t) {
+        add += t.add;
     }
 };
 
 struct Info {
-    i64 sum;
+    i64 x;
     int sz;
-    Info(i64 v = 0, int sz = 1) : sum(v), sz(sz) {}
 
-    void apply(const Tag& v) {
-        sum += 1LL * v.sum * sz;
+    Info(i64 x_ = 0, int sz_ = 1) : x(x_), sz(sz_) {}
+
+    void apply(Tag t) {
+        x += t.add * sz;
     }
 };
 
-Info operator+(const Info& a, const Info& b) {
-    return Info(a.sum + b.sum, a.sz + b.sz);
+Info operator+(Info a, Info b) {
+    return {a.x + b.x, a.sz + b.sz};
 }
 
 void solve() {
     int n, q;
     cin >> n >> q;
-    vector<int> a(n);
-    for (auto& x : a) {
-        cin >> x;
-    }
-    Seg<Info, Tag> seg(0, n);
+    vector<Info> a(n);
     for (int i = 0; i < n; i++) {
-        seg.modify(i, Info(a[i]));
+        cin >> a[i].x;
     }
+
+    LazySegmentTree<Info, Tag> seg(a);
+
     while (q--) {
         int op;
         cin >> op;
         if (op == 1) {
-            int l, r, x;
+            int l, r;
+            i64 x;
             cin >> l >> r >> x;
-            seg.rangeApply(l - 1, r, Tag(x));
+            l--;
+            seg.rangeApply(l, r, Tag(x));
         } else {
             int l, r;
             cin >> l >> r;
-            cout << seg.rangeQuery(l - 1, r).sum << "\n";
+            l--;
+            cout << seg.rangeQuery(l, r).x << '\n';
         }
     }
-
 }
 
 int main() {
