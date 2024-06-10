@@ -9,18 +9,20 @@ from math import gcd, lcm
 
 
 class Solution:
-    def numberOfPairs(self, nums1, nums2, k):
-        c1 = Counter(x // k for x in nums1 if x % k == 0)
-        c2 = Counter(nums2)
-        mx = max(c1.keys()) + 1
+    def maxTotalReward(self, a):
+        mx = max(a)
+
+        f = [0] * (mx * 2 + 1)
+
+        a.sort()
+
         ans = 0
-        for x, v in c2.items():
-            res = 0
-            for y in range(x, mx, x):
-                res += c1[y]
-            ans += res * v
+        for r in a:
+            for j in range(r * 2 + 1):
+                if r <= j < 2 * r:
+                    f[j] = max(f[j], f[j - r] + r)
+                    ans = max(ans, f[j])
         return ans
-            
 
 
 if __name__ == "__main__":

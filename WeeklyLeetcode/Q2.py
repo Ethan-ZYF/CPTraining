@@ -7,22 +7,16 @@ from bisect import *
 from typing import *
 from string import ascii_lowercase
 
-
+MOD = 10 ** 9 + 7
 class Solution:
-    def countDays(self, days: int, meetings: List[List[int]]) -> int:
-        meetings.sort()
-        merged = []
-        s, e = meetings[0]
-        for x, y in meetings[1:]:
-            if x <= e:
-                e = max(e, y)
-            else:
-                merged.append([s, e])
-                s, e = x, y
-        merged.append([s, e])
-        for s, e in merged:
-            days -= e - s + 1
-        return days
+    def valueAfterKSeconds(self, n: int, k: int) -> int:
+        a = [1] * n
+        while k:
+            b = list(accumulate(a))
+            for i in range(n):
+                a[i] = b[i] % MOD
+            k -= 1
+        return a[-1]
 
 
 

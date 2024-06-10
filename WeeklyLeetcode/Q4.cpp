@@ -8,73 +8,41 @@ using i64 = long long;
 #define debug(...)
 #endif
 
-template <class Info, class Merge = std::plus<Info>>
-struct SegmentTree {
-    const int n;
-    const Merge merge;
-    std::vector<Info> info;
-
-    SegmentTree(int n) : n(n), merge(Merge()), info(4 << std::__lg(n)) {}
-
-    SegmentTree(std::vector<Info> init) : SegmentTree(init.size()) {
-        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
-            if (r - l == 1) {
-                info[p] = init[l];
-                return;
-            }
-            int m = (l + r) / 2;
-            build(2 * p, l, m);
-            build(2 * p + 1, m, r);
-            pull(p);
-        };
-        build(1, 0, n);
-    }
-
-    void pull(int p) {
-        info[p] = merge(info[2 * p], info[2 * p + 1]);
-    }
-
-    void modify(int p, int l, int r, int x, const Info& v) {
-        if (r - l == 1) {
-            info[p] = v;
-            return;
-        }
-        int m = (l + r) / 2;
-        if (x < m) {
-            modify(2 * p, l, m, x, v);
-        } else {
-            modify(2 * p + 1, m, r, x, v);
-        }
-        pull(p);
-    }
-
-    void modify(int p, const Info& v) {
-        modify(1, 0, n, p, v);
-    }
-
-    Info rangeQuery(int p, int l, int r, int x, int y) {
-        if (l >= y || r <= x) {
-            return Info();
-        }
-        if (l >= x && r <= y) {
-            return info[p];
-        }
-        int m = (l + r) / 2;
-        return merge(rangeQuery(2 * p, l, m, x, y), rangeQuery(2 * p + 1, m, r, x, y));
-    }
-
-    Info rangeQuery(int l, int r) {
-        return rangeQuery(1, 0, n, l, r);
-    }
-};
-
+char s[10001];
 class Solution {
    public:
-    vector<bool> getResults(vector<vector<int>>& queries) {}
+    int maxTotalReward(vector<int>& a) {
+        sort(a.begin(), a.end());
+        memset(s, 0, sizeof(s));
+        int m = a.back() * 2;
+        s[0] = 1;
+        for (int x : a) {
+            for (int i = x; i < 2 * x; i++) {
+                s[i] |= s[i - x];
+            }
+        }
+        int i;
+        for (i = m; i >= 0; i--)
+            if (s[i]) break;
+        return i;
+    }
 };
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
+
+    Solution sol;
+    // rewardValues = [1,1,3,3]
+    vector<int> rewardValues = {1, 1, 3, 3};
+    // cout << sol.maxTotalReward(rewardValues) << endl;
+    rewardValues = {1, 6, 4, 3, 2};
+    // cout << sol.maxTotalReward(rewardValues) << endl;
+    // [3,14,12] 26
+    rewardValues = {3, 14, 12};
+    // cout << sol.maxTotalReward(rewardValues) << endl;
+    // [6,17,10,13]
+    rewardValues = {6, 17, 10, 13};
+    cout << sol.maxTotalReward(rewardValues) << endl;
 
     return 0;
 }
