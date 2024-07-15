@@ -8,58 +8,206 @@ using i64 = long long;
 #define debug(...)
 #endif
 
-map<i64, int> factor(i64 n) {
-    map<i64, int> res;
-    for (i64 i = 2; i * i <= n; i++) {
-        if (n % i == 0) {
-            res[i] = 0;
-            while (n % i == 0) {
-                res[i]++;
-                n /= i;
+/*
+ * @author jiangly
+ * https://codeforces.com/profile/jiangly
+ */
+template <class Info, class Tag>
+struct LazySegmentTree {
+    int n;
+    std::vector<Info> info;
+    std::vector<Tag> tag;
+
+    LazySegmentTree() : n(0) {}
+
+    LazySegmentTree(int n_, Info v_ = Info()) {
+        init(n_, v_);
+    }
+
+    template <class T>
+    LazySegmentTree(std::vector<T> init_) {
+        init(init_);
+    }
+
+    void init(int n_, Info v_ = Info()) {
+        init(std::vector(n_, v_));
+    }
+
+    template <class T>
+    void init(std::vector<T> init_) {
+        n = init_.size();
+        info.assign(4 << std::__lg(n), Info());
+        tag.assign(4 << std::__lg(n), Tag());
+        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+            if (r - l == 1) {
+                info[p] = init_[l];
+                return;
             }
+            int m = (l + r) / 2;
+            build(2 * p, l, m);
+            build(2 * p + 1, m, r);
+            pull(p);
+        };
+        build(1, 0, n);
+    }
+
+    void pull(int p) {
+        info[p] = info[2 * p] + info[2 * p + 1];
+    }
+
+    void apply(int p, const Tag& v) {
+        info[p].apply(v);
+        tag[p].apply(v);
+    }
+
+    void push(int p) {
+        apply(2 * p, tag[p]);
+        apply(2 * p + 1, tag[p]);
+        tag[p] = Tag();
+    }
+
+    void modify(int p, int l, int r, int x, const Info& v) {
+        if (r - l == 1) {
+            info[p] = v;
+            return;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        if (x < m) {
+            modify(2 * p, l, m, x, v);
+        } else {
+            modify(2 * p + 1, m, r, x, v);
+        }
+        pull(p);
+    }
+
+    void modify(int p, const Info& v) {
+        modify(1, 0, n, p, v);
+    }
+
+    Info rangeQuery(int p, int l, int r, int x, int y) {
+        if (l >= y || r <= x) {
+            return Info();
+        }
+        if (l >= x && r <= y) {
+            return info[p];
+        }
+        int m = (l + r) / 2;
+        push(p);
+        return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m, r, x, y);
+    }
+
+    Info rangeQuery(int l, int r) {
+        return rangeQuery(1, 0, n, l, r);
+    }
+
+    void rangeApply(int p, int l, int r, int x, int y, const Tag& v) {
+        if (l >= y || r <= x) {
+            return;
+        }
+        if (l >= x && r <= y) {
+            apply(p, v);
+            return;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        rangeApply(2 * p, l, m, x, y, v);
+        rangeApply(2 * p + 1, m, r, x, y, v);
+        pull(p);
+    }
+
+    void rangeApply(int l, int r, const Tag& v) {
+        return rangeApply(1, 0, n, l, r, v);
+    }
+
+    template <class F>
+    int findFirst(int p, int l, int r, int x, int y, F pred) {
+        if (l >= y || r <= x || !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        int res = findFirst(2 * p, l, m, x, y, pred);
+        if (res == -1) {
+            res = findFirst(2 * p + 1, m, r, x, y, pred);
+        }
+        return res;
+    }
+
+    template <class F>
+    int findFirst(int l, int r, F pred) {
+        return findFirst(1, 0, n, l, r, pred);
+    }
+
+    template <class F>
+    int findLast(int p, int l, int r, int x, int y, F pred) {
+        if (l >= y || r <= x || !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        int res = findLast(2 * p + 1, m, r, x, y, pred);
+        if (res == -1) {
+            res = findLast(2 * p, l, m, x, y, pred);
+        }
+        return res;
+    }
+
+    template <class F>
+    int findLast(int l, int r, F pred) {
+        return findLast(1, 0, n, l, r, pred);
+    }
+};
+
+struct Tag {
+    int flip;
+
+    Tag(int add_ = 0) : flip(add_) {}
+
+    void apply(Tag t) {
+        flip ^= t.flip;
+    }
+};
+
+struct Info {
+    int x = 0;
+
+    Info(int x_ = 0) : x(x_) {}
+
+    void apply(Tag t) {
+        if (t.flip) {
+            x = 1 - x;
         }
     }
-    if (n > 1) {
-        res[n] = 1;
-    }
-    return res;
-}
+};
 
-map<i64, int> mpadd(map<i64, int> a, map<i64, int> b) {
-    for (auto [k, v] : b) {
-        a[k] += v;
-    }
-    return a;
+Info operator+(Info a, Info b) {
+    return {a.x + b.x};
 }
 
 class Solution {
    public:
-    string clearStars(string s) {
-        int n = s.size();
-        set<int> rm;
-        vector<priority_queue<int>> pos(26);
+    int minOperations(vector<int>& nums) {
+        int n = nums.size();
+        LazySegmentTree<Info, Tag> st(n);
         for (int i = 0; i < n; i++) {
-            if (s[i] == '*') {
-                for (int j = 0; j < 26; j++) {
-                    if (!pos[j].empty()) {
-                        rm.insert(pos[j].top());
-                        pos[j].pop();
-                        break;
-                    }
-                }
-            } else {
-                pos[s[i] - 'a'].push(i);
+            st.modify(i, Info(nums[i]));
+        }
+        int ans = 0;
+        for(int i = 0; i < n; i++){
+            int x = st.rangeQuery(i, i + 1).x;
+            if(x == 0){
+                st.rangeApply(i, n, Tag(1));
+                ans++;
             }
         }
-        string res;
-        for (int i = 0; i < n; i++) {
-            if (s[i] != '*') {
-                if (!rm.count(i)) {
-                    res.push_back(s[i]);
-                }
-            }
-        }
-        return res;
+        return ans;
     }
 };
 

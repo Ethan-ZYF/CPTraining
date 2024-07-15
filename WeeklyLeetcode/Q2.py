@@ -7,23 +7,26 @@ from bisect import *
 from typing import *
 from string import ascii_lowercase
 
-MOD = 10 ** 9 + 7
-class Solution:
-    def valueAfterKSeconds(self, n: int, k: int) -> int:
-        a = [1] * n
-        while k:
-            b = list(accumulate(a))
-            for i in range(n):
-                a[i] = b[i] % MOD
-            k -= 1
-        return a[-1]
 
+class Solution:
+    def modifiedList(self, nums: List[int], head: Optional[ListNode]) -> Optional[ListNode]:
+        mp = Counter(nums)
+        dummy = ListNode()
+        dummy.next = head
+        cur = dummy
+        while cur.next:
+            if mp[cur.next.val]:
+                cur.next = cur.next.next
+            else:
+                cur = cur.next
+        return dummy.next
 
 
 if __name__ == "__main__":
     s = Solution()
-    # [3, 4, 1, 2, 6]
-    # nums = [4, 3, 1, 1, 1, 1, 6]
-    nums = [4, 3, 1, 6]
-    queries = [[0, 2], [2, 3]]
-    print(s.isArraySpecial(nums, queries))
+    nums = [1,2,3,4,5]
+    k = 2
+    print(s.maximumLength(nums, k))
+    nums = [1, 4, 2, 3, 1, 4]
+    k = 3
+    print(s.maximumLength(nums, k))

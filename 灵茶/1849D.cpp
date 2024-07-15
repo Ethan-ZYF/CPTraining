@@ -32,15 +32,14 @@ void solve() {
     for (auto& [l, r, mx] : inter) {
         for (int i = l; i <= r; i++)
             b[i] = 1;
-        if (mx == 2) b[max(0, l - 1)] = b[min(n - 1, r + 1)] = 1;
+        if (mx == 2) b[max(0, l - 1)] = 1, b[min(n - 1, r + 1)] = 1;
         if (mx == 1) {
-            if (l > 0 and a[l - 1] == 0)
+            if (l > 0 and b[l - 1] == 0)
                 b[l - 1] = 1;
             else
                 b[min(n - 1, r + 1)] = 1;
         }
     }
-    debug(b);
     ans += count(b.begin(), b.end(), 0);
     cout << ans << '\n';
 }

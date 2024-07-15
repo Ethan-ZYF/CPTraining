@@ -169,13 +169,27 @@ void solve() {
         cin >> x;
     }
 
-    WaveletMatrix wm(a);
+    auto b = a, c = a;
+
+    sort(a.begin(), a.end());
+    a.erase(unique(a.begin(), a.end()), a.end());
+
+    auto find = [&](int x) {
+        return lower_bound(a.begin(), a.end(), x) - a.begin();
+    };
+    map<int, int> mp;
+    for (int i = 0; i < n; i++) {
+        b[i] = find(b[i]);
+        mp[b[i]] = c[i];
+    }
+
+    WaveletMatrix wm(b, a.size());
     cin >> q;
     while (q--) {
-        int l, r, k;
-        cin >> l >> r >> k;
+        int l, r;
+        cin >> l >> r;
         l--;
-        cout << wm.rangefreq(l, r, k + 1, 1e9 + 1) << '\n';
+        cout << wm.rangefreq(l, r, 0, a.size() + 1) << '\n';
     }
 }
 

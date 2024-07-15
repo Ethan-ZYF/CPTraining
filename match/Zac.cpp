@@ -1,85 +1,47 @@
 #include <bits/stdc++.h>
-using namespace std;
+
 using i64 = long long;
-namespace rgs = std::ranges;
-#ifdef LOCAL
-#include "algo/debug.h"
-#else
-#define debug(...)
-#endif
-
-struct DSU {
-    std::vector<int> f, siz;
-
-    DSU() {}
-
-    DSU(int n) {
-        init(n);
-    }
-
-    void init(int n) {
-        f.resize(n);
-        std::iota(f.begin(), f.end(), 0);
-        siz.assign(n, 1);
-    }
-
-    int find(int x) {
-        while (x != f[x]) {
-            x = f[x] = f[f[x]];
-        }
-        return x;
-    }
-
-    bool same(int x, int y) {
-        return find(x) == find(y);
-    }
-
-    bool merge(int x, int y) {
-        x = find(x);
-        y = find(y);
-        if (x == y) {
-            return false;
-        }
-        siz[x] += siz[y];
-        f[y] = x;
-        return true;
-    }
-
-    int size(int x) {
-        return siz[find(x)];
-    }
-};
-
-void solve() {
-    int n;
-    cin >> n;
-    DSU dsu(n);
-    for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
-        dsu.merge(i, x - 1);
-    }
-    debug(dsu.siz);
-    map<int, int> sz;
-    for (int i = 0; i < n; i++) {
-        sz[dsu.find(i)]++;
-    }
-    int ans = 0;
-    for (auto [k, v] : sz) {
-        ans += v - 1;
-    }
-    cout << ans << '\n';
-}
 
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    int T = 1;
-    // cin >> T;
-    for (int Task = 1; Task <= T; Task++) {
-        debug(Task);
-        solve();
+    int n;
+    std::cin >> n;
+
+    std::vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        std::cin >> a[i];
     }
+
+    std::vector<int> r(n);
+    std::iota(r.begin(), r.end(), 0);
+
+    std::vector<int> lst(n, 0), nxt(n, n - 1);
+    for (int i = 0; i < n - 1; i++) {
+        lst[i + 1] = a[i] == 0 ? i : lst[i];
+    }
+    for (int i = n - 1; i > 0; i--) {
+        nxt[i - 1] = a[i] == 0 ? i : nxt[i];
+    }
+    for (int i = 0; i < n; i++) {
+        if (a[i] == 1) {
+            r[lst[i]] = std::max(r[lst[i]], i);
+            r[i] = std::max(r[i], nxt[i]);
+        } else if (a[i] == 2) {
+            r[lst[i]] = std::max(r[lst[i]], nxt[i]);
+        }
+    }
+
+    for (int i = 1; i < n; i++) {
+        r[i] = std::max(r[i], r[i - 1]);
+    }
+
+    int ans = 0;
+    for (int i = 0; i < n; i = r[i] + 1) {
+        ans++;
+    }
+    std::cout << ans << "\n";
 
     return 0;
 }

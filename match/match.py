@@ -19,10 +19,9 @@ def make_input(outfile):
     TODO: Modify this function to randomly generate input for the problem
     """
     n = 5
-    ls = list(range(1, n + 1))
-    shuffle(ls)
+    lst = [randint(0, 2) for _ in range(n)]
     print(n, file=outfile)
-    print(*ls, file=outfile)
+    print(" ".join(map(str, lst)), file=outfile)
 
 
 def compile_code():

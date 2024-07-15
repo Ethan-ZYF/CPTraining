@@ -8,18 +8,14 @@ from typing import *
 
 
 class Solution:
-    def numberOfChild(self, n: int, k: int) -> int:
-        i = 0
-        di = 1
-        while k:
-            i += di
-            if i == n - 1:
-                di = -1
-            if i == 0:
-                di = 1
-            k -= 1
-        return i
-
+    def getSmallestString(self, s: str) -> str:
+        n = len(s)
+        s = list([int(x) for x in s])
+        for i in range(n - 1):
+            if s[i] % 2 == s[i + 1] % 2 and s[i] > s[i + 1]:
+                s[i], s[i + 1] = s[i + 1], s[i]
+                break
+        return "".join([str(x) for x in s])
 
 if __name__ == "__main__":
     s = Solution()
